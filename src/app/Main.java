@@ -53,16 +53,36 @@ public class Main {
 		semaforos.add(new Semaphore(0));
 		semaforos.add(new Semaphore(0));
 
-		TaxCalculator ImpostoDeRenda = 		new TaxCalculator(1, partes, semaforos, 0, new ImpostoDeRenda());
-		TaxCalculator INSS = 				new TaxCalculator(2, partes, semaforos, 1, new INSS());
-		TaxCalculator PrevidenciaPrivada = 	new TaxCalculator(3, partes, semaforos, 2, new PrevidenciaPrivada());
-		TaxCalculator PlanoSaude = 			new TaxCalculator(4, partes, semaforos, 3, new PlanoDeSaude());
+		TaxCalculator ImpostoDeRenda = new TaxCalculator(1, partes, semaforos, 0, new ImpostoDeRenda());
+		TaxCalculator INSS = new TaxCalculator(2, partes, semaforos, 1, new INSS());
+		TaxCalculator PrevidenciaPrivada = new TaxCalculator(3, partes, semaforos, 2, new PrevidenciaPrivada());
+		TaxCalculator PlanoSaude = new TaxCalculator(4, partes, semaforos, 3, new PlanoDeSaude());
 
+		long startTime = System.currentTimeMillis();
+		
 		ImpostoDeRenda.start();
 		INSS.start();
 		PrevidenciaPrivada.start();
 		PlanoSaude.start();
 
+		try {
+			ImpostoDeRenda.join();
+			INSS.join();
+			PrevidenciaPrivada.join();
+			PlanoSaude.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		long endTime = System.currentTimeMillis();
+
+		int ms = (int)(endTime - startTime);
+		int segundos = ms/1000;
+		int minutos = segundos/60;
+		ms = ms % 1000;
+		segundos = segundos % 60;
+		System.out.printf("Tempo decorrido: %02d:%02d.%03d", minutos, segundos, ms);
+		
 		sc.close();
 	}
 
