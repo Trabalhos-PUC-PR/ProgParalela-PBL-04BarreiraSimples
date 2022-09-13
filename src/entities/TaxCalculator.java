@@ -1,10 +1,12 @@
 package entities;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Semaphore;
-
 import interfaces.Tax;
-import utils.TextFileHandler;
 
 public class TaxCalculator extends Thread {
 
@@ -26,11 +28,16 @@ public class TaxCalculator extends Thread {
 	}
 
 	public void impressao(List<List<Funcionario>> funcionarios) {
-		TextFileHandler.createFile("parte" + id + ".txt");
-		TextFileHandler handler = new TextFileHandler("parte" + id + ".txt");
-		handler.clear();
-		for (Funcionario f : funcionarios.get(parteInicial)) {
-			handler.append(f.toString() + "\n");
+		try {
+			File file = new File("parte" + id + ".txt");
+			file.createNewFile();
+			BufferedWriter bw = new BufferedWriter(new FileWriter(file));
+			for (Funcionario f : funcionarios.get(parteInicial)) {
+				bw.append(f.toString() + "\n");
+			}
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -47,6 +54,7 @@ public class TaxCalculator extends Thread {
 			}
 			atual++;
 		}
+		System.out.printf("%d OK\n", id);
 		rendezvous();
 		impressao(funcionarios);
 	}
